@@ -4,13 +4,14 @@ using System.Text;
 
 namespace Okosotthon
 {
-    public class OkosZar : OkosEszkoz
+    public class OkosZar : OkosEszkoz, IHangjelzo, IStatisztika
     {
 
-        private bool zartE;
-
-        private string pinKod;
-
+        private bool zartE; 
+        private string pinKod; 
+        
+        private int nyitasokSzama; 
+        private int hibasPinProbalkozasok;
 
         public bool ZartE
 
@@ -22,7 +23,6 @@ namespace Okosotthon
 
         }
 
-
         public OkosZar(string azonosito, string nev, string pinKod)
 
             : base(azonosito, nev)
@@ -31,10 +31,13 @@ namespace Okosotthon
 
             this.pinKod = pinKod;
 
-            this.ZartE = true;
+            ZartE = true;
+
+            nyitasokSzama = 0;
+
+            hibasPinProbalkozasok = 0;
 
         }
-
 
         public override void ParancsVegrehajtasa(string parancs)
 
@@ -51,7 +54,37 @@ namespace Okosotthon
 
                 {
 
-                    this.ZartE = false;
+                    if (ZartE)
+
+                    {
+
+                        nyitasokSzama++;
+
+                    }
+
+
+                    ZartE = false;
+
+                    hibasPinProbalkozasok = 0;
+
+                }
+
+                else
+                {
+
+                    hibasPinProbalkozasok++;
+
+
+                    Csipog(1);
+
+
+                    if (hibasPinProbalkozasok >= 3)
+
+                    {
+
+                        VeszjelzesInditasa();
+
+                    }
 
                 }
 
@@ -61,21 +94,19 @@ namespace Okosotthon
 
             {
 
-                this.ZartE = true;
+                ZartE = true;
 
             }
 
         }
 
-
         public override string AllapotJelentes()
 
         {
 
-            return this.ZartE ? "Zárva" : "Nyitva";
+            return ZartE ? "Zárva" : "Nyitva";
 
         }
-
 
         protected override bool OnTesztFuttatasa()
 
@@ -85,16 +116,43 @@ namespace Okosotthon
 
         }
 
-
         public override void GyariBeallitasokVisszaallitasa()
 
         {
 
             base.GyariBeallitasokVisszaallitasa();
 
-            this.pinKod = "0000";
+            ZartE = true;
 
-            this.ZartE = true;
+            nyitasokSzama = 0;
+
+            hibasPinProbalkozasok = 0;
+
+        }
+
+        public void Csipog(int hosszu)
+
+        {
+
+            Console.WriteLine($"Csipogás! Hossz: {hosszu}");
+
+        }
+
+        public void VeszjelzesInditasa()
+
+        {
+
+            Console.WriteLine("VÉSZJELZÉS! Túl sok hibás PIN-kód!");
+
+        }
+
+        public string StatisztikatKeszit()
+
+        {
+
+            return $"Sikeres nyitások száma: {nyitasokSzama}, " +
+
+                   $"Hibás PIN-próbálkozások száma: {hibasPinProbalkozasok}";
 
         }
     }
