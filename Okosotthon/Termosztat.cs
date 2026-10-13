@@ -21,18 +21,34 @@ namespace Okosotthon
 
         public override void ParancsVegrehajtasa(string parancs)
         {
-            throw new NotImplementedException();
+            if (parancs.StartsWith("Beallit_Homersekletet: "))
+            {
+                string ertek = parancs.Substring("Beallit_Homersekletet: ".Length);
+
+                if (double.TryParse(ertek, out double homerseklet))
+                {
+                    CelHomerseklet = homerseklet;
+                })
+            }
         }
 
         public override string AllapotJelentes()
         {
-            throw new NotImplementedException();
+            return $"A jelenlegi hőmérséklet: {JelenlegiHomerseklet}";
         }
 
         protected override bool OnTesztFuttatasa()
         {
-            throw new NotImplementedException();
-        }
+            if (this.celHomerseklet >= 5.0 && this.celHomerseklet <= 35.0)
+            {
+                return true;
 
-    }
+            }
+            else
+            {
+                return false;
+            }
+
+        }
+    } 
 }
